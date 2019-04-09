@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+
+
+function site_api_key_form_system_site_information_settings_alter(&$form, $form_state, $form_id)
+{
+
+    // Add Site API Key field to 'Site Information' section
+    $site_api_key_field = \Drupal::config('siteapikey.configuration')->get('siteapikey');
+    $form['site_information']['site_api_key_field'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Site API Key'),
+        '#default_value' => $site_api_key_field,
+        '#description' => t('This field gives the API Key to access site pages in JSON format.'),
+    );
+
+    // Change form submit button text to 'Update Configuration'
+    $form['actions']['submit']['#value'] = t('Update configuration');
+
+    // form submission
+    $form['#submit'][] = 'site_api_key_handler';
+}
+
+function site_api_key_handler($form, &$form_state)
+{
+    // Update the system variable Site API Key
+    $config = \Drupal::configFactory()->getEditable('siteapikey.configuration');
+    $new_site_api_key_field = $form_state->getValue(['site_api_key_field']);
+    $config->set('siteapikey', $new_site_api_key_field);
+    $config->save();
+
+    // Adds message that Site API Key has been set
+    drupal_set_message(" Site API Key is successfully set to " . $new_site_api_key_field);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function site_api_key_uninstall(){
+    // Remove the previously set Site API Key configuration
+    \Drupal::configFactory()->getEditable('siteapikey.configuration')->delete();
+}

@@ -1,0 +1,12 @@
+siteapikey.field:
+  path: '/page/{site_api_key}/{node}'
+  defaults:
+    _controller: '\Drupal\site_api_key\Controller\SiteApiKeyFieldController::content'
+  # options:
+  #     parameters:
+  #       site_api_key_field:
+  #         type: String
+  #       node:
+  #         type: entity:node
+  requirements:
+    _permission: 'access content'
